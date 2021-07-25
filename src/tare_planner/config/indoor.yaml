@@ -2,7 +2,8 @@
 sub_start_exploration_topic_ : /start_exploration
 sub_terrain_map_topic_ : /terrain_map
 sub_terrain_map_ext_topic_ : /terrain_map_ext
-sub_state_estimation_topic_ : /state_estimation_at_scan
+#sub_state_estimation_topic_ : /state_estimation_at_scan
+sub_state_estimation_topic_ : /state_estimation
 sub_registered_scan_topic_ : /registered_scan
 sub_coverage_boundary_topic_ : /sensor_coverage_planner/coverage_boundary
 sub_viewpoint_boundary_topic_ : /sensor_coverage_planner/viewpoint_boundary
@@ -16,7 +17,7 @@ kAutoStart : true
 kRushHome : true
 kUseTerrainHeight : false
 kCheckTerrainCollision : true
-kExtendWayPoint : true
+kExtendWayPoint : false
 kUseLineOfSightLookAheadPoint : true
 kExtendWayPointDistance : 8.0
 kKeyposeCloudDwzFilterLeafSize : 0.2
@@ -43,7 +44,7 @@ kPointCloudRowNum : 50
 kPointCloudColNum : 50
 kPointCloudLevelNum : 30
 kMaxCellPointNum : 100000
-kPointCloudCellSize : 18
+kPointCloudCellSize : 9
 kPointCloudCellHeight : 1.8
 kPointCloudManagerNeighborCellNum : 5
 kCoverCloudZSqueezeRatio : 2.0

@@ -54,9 +54,9 @@ add_library(lidar_model src/lidar_model/lidar_model.cpp)
 add_dependencies(lidar_model ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(lidar_model ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_library(misc_utils src/utils/misc_utils.cpp)
-add_dependencies(misc_utils ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(misc_utils ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_library(tare_misc_utils src/utils/misc_utils.cpp)
+add_dependencies(tare_misc_utils ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(tare_misc_utils ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_library(pointcloud_utils src/utils/pointcloud_utils.cpp)
 add_dependencies(pointcloud_utils ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -72,7 +72,7 @@ target_link_libraries(viewpoint ${catkin_LIBRARIES} lidar_model)
 
 add_library(rolling_grid src/rolling_grid/rolling_grid.cpp)
 add_dependencies(rolling_grid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(rolling_grid ${catkin_LIBRARIES} misc_utils pointcloud_utils)
+target_link_libraries(rolling_grid ${catkin_LIBRARIES} tare_misc_utils pointcloud_utils)
 
 add_library(viewpoint_manager src/viewpoint_manager/viewpoint_manager.cpp)
 add_dependencies(viewpoint_manager ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
