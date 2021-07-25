@@ -182,30 +182,30 @@ void KeyposeGraph::GetMarker(visualization_msgs::Marker& node_marker, visualizat
 {
   node_marker.points.clear();
   edge_marker.points.clear();
-  // node_marker.colors.clear();
-  // std_msgs::ColorRGBA red;
-  // red.r = 1.0;
-  // red.g = 0.0;
-  // red.b = 0.0;
-  // red.a = 1.0;
+  node_marker.colors.clear();
+  std_msgs::ColorRGBA red;
+  red.r = 1.0;
+  red.g = 0.0;
+  red.b = 0.0;
+  red.a = 1.0;
 
-  // std_msgs::ColorRGBA green;
-  // red.r = 0.0;
-  // red.g = 1.0;
-  // red.b = 0.0;
-  // red.a = 1.0;
+  std_msgs::ColorRGBA green;
+  green.r = 0.0;
+  green.g = 1.0;
+  green.b = 0.0;
+  green.a = 1.0;
 
   for (const auto& node : nodes_)
   {
     node_marker.points.push_back(node.position_);
-    // if (node.is_connected_)
-    // {
-    //   node_marker.colors.push_back(green);
-    // }
-    // else
-    // {
-    //   node_marker.colors.push_back(red);
-    // }
+    if (node.is_connected_)
+    {
+      node_marker.colors.push_back(green);
+    }
+    else
+    {
+      node_marker.colors.push_back(red);
+    }
   }
 
   std::vector<std::pair<int, int>> added_edge;

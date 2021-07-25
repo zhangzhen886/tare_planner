@@ -624,6 +624,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveTSP(const std::v
   return tsp_path;
 }
 
+// SensorCoveragePlanner3D::LocalPlanning中调用
 exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveLocalCoverageProblem(
     const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num, int uncovered_frontier_point_num)
 {
@@ -785,6 +786,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveLocalCoveragePro
 
     last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
   }
+  std::cout << "selected viewpoints num: " << last_selected_viewpoint_indices_.size() << std::endl;
 
   last_selected_viewpoint_array_indices_.clear();
   for (const auto& ind : last_selected_viewpoint_indices_)
@@ -821,19 +823,19 @@ void LocalCoveragePlanner::GetSelectedViewPointVisCloud(pcl::PointCloud<pcl::Poi
     point.z = position.z;
     if (viewpoint_index == robot_viewpoint_ind_)
     {
-      point.intensity = 0.0;
+      point.intensity = 0.0;  // 红
     }
     else if (viewpoint_index == start_viewpoint_ind_)
     {
-      point.intensity = 1.0;
+      point.intensity = 1.0;  // 绿
     }
     else if (viewpoint_index == end_viewpoint_ind_)
     {
-      point.intensity = 2.0;
+      point.intensity = 2.0;  // 青
     }
     else
     {
-      point.intensity = 3.0;
+      point.intensity = 3.0;  // 紫
     }
     cloud->points.push_back(point);
   }

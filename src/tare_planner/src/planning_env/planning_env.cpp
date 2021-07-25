@@ -60,27 +60,25 @@ PlanningEnv::PlanningEnv(ros::NodeHandle nh, ros::NodeHandle nh_private, std::st
   {
     vertical_surface_cloud_stack_[i].reset(new pcl::PointCloud<PlannerCloudPointType>());
   }
-  keypose_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(nh, "keypose_cloud", world_frame_id);
-  stacked_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(nh, "stacked_cloud", world_frame_id);
+  keypose_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
+      nh, "planning_env/keypose_cloud", world_frame_id);
+  stacked_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
+      nh, "planning_env/stacked_cloud", world_frame_id);
   stacked_vertical_surface_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
-      nh, "stacked_vertical_surface_cloud", world_frame_id);
+      nh, "planning_env/stacked_vertical_surface_cloud", world_frame_id);
 
   stacked_vertical_surface_cloud_kdtree_ =
       pcl::KdTreeFLANN<PlannerCloudPointType>::Ptr(new pcl::KdTreeFLANN<PlannerCloudPointType>());
-  vertical_surface_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(nh, "coverage_cloud", world_frame_id);
-
-  diff_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(nh, "diff_cloud", world_frame_id);
-
+  vertical_surface_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
+      nh, "planning_env/coverage_cloud", world_frame_id);
+  diff_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
+      nh, "planning_env/diff_cloud", world_frame_id);
   collision_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
+  terrain_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/terrain_cloud", world_frame_id);
+  planner_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
+      nh, "planning_env/planner_cloud", world_frame_id);
 
-  terrain_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "terrain_cloud", world_frame_id);
-
-  planner_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(nh, "planner_cloud", world_frame_id);
   pointcloud_manager_ = std::make_unique<pointcloud_manager_ns::PointCloudManager>(
       parameters_.kPointCloudRowNum, parameters_.kPointCloudColNum, parameters_.kPointCloudLevelNum,
       parameters_.kMaxCellPointNum, parameters_.kPointCloudCellSize, parameters_.kPointCloudCellHeight,
@@ -90,39 +88,38 @@ PlanningEnv::PlanningEnv(ros::NodeHandle nh, ros::NodeHandle nh_private, std::st
   rolling_occupancy_grid_ = std::make_unique<rolling_occupancy_grid_ns::RollingOccupancyGrid>(nh_private);
 
   squeezed_planner_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
-      nh, "squeezed_planner_cloud", world_frame_id);
+      nh, "planning_env/squeezed_planner_cloud", world_frame_id);
   squeezed_planner_cloud_kdtree_ =
       pcl::KdTreeFLANN<PlannerCloudPointType>::Ptr(new pcl::KdTreeFLANN<PlannerCloudPointType>());
 
-  uncovered_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "uncovered_cloud", world_frame_id);
-  uncovered_frontier_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "uncovered_frontier_cloud", world_frame_id);
-  frontier_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "frontier_cloud", world_frame_id);
-  filtered_frontier_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "filtered_frontier_cloud", world_frame_id);
-  occupied_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "occupied_cloud", world_frame_id);
-  free_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "free_cloud", world_frame_id);
-  unknown_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "unknown_cloud", world_frame_id);
+  uncovered_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/uncovered_cloud", world_frame_id);
+  uncovered_frontier_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/uncovered_frontier_cloud", world_frame_id);
+  frontier_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/frontier_cloud", world_frame_id);
+  filtered_frontier_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/filtered_frontier_cloud", world_frame_id);
+  occupied_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/occupied_cloud", world_frame_id);
+  free_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/free_cloud", world_frame_id);
+  unknown_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/unknown_cloud", world_frame_id);
 
   rolling_occupancy_grid_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
-      nh, "rolling_occupancy_grid_cloud", world_frame_id);
-
-  rolling_frontier_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "rolling_frontier_cloud", world_frame_id);
-
+      nh, "planning_env/rolling_occupancy_grid_cloud", world_frame_id);
+  rolling_frontier_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/rolling_frontier_cloud", world_frame_id);
   rolling_filtered_frontier_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
-      nh, "rolling_filtered_frontier_cloud", world_frame_id);
-
-  rolled_in_occupancy_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "rolled_in_occupancy_cloud", world_frame_id);
-  rolled_out_occupancy_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "rolled_out_occupancy_cloud", world_frame_id);
+      nh, "planning_env/rolling_filtered_frontier_cloud", world_frame_id);
+  rolled_in_occupancy_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/rolled_in_occupancy_cloud", world_frame_id);
+  rolled_out_occupancy_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planning_env/rolled_out_occupancy_cloud", world_frame_id);
 
   pointcloud_manager_occupancy_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
-      nh, "pointcloud_manager_occupancy_cloud_", world_frame_id);
+      nh, "planning_env/pointcloud_manager_occupancy_cloud_", world_frame_id);
 
   kdtree_frontier_cloud_ = pcl::search::KdTree<pcl::PointXYZI>::Ptr(new pcl::search::KdTree<pcl::PointXYZI>);
   kdtree_rolling_frontier_cloud_ = pcl::search::KdTree<pcl::PointXYZI>::Ptr(new pcl::search::KdTree<pcl::PointXYZI>);
@@ -159,6 +156,7 @@ void PlanningEnv::UpdateCollisionCloud()
                                       parameters_.kCollisionCloudDwzLeafSize, parameters_.kCollisionCloudDwzLeafSize);
 }
 
+// "PlanningEnv::UpdateKeyposeCloud"中调用
 void PlanningEnv::UpdateFrontiers()
 {
   if (parameters_.kUseFrontier)
@@ -206,7 +204,7 @@ void PlanningEnv::UpdateFrontiers()
       extract.setIndices(inliers);
       extract.setNegative(false);
       extract.filter(*(filtered_frontier_cloud_->cloud_));
-      filtered_frontier_cloud_->Publish();
+      filtered_frontier_cloud_->Publish();  // "~/filtered_frontier_cloud"
     }
   }
 }
@@ -248,6 +246,7 @@ bool PlanningEnv::InCollision(double x, double y, double z) const
   }
 }
 
+// "SensorCoveragePlanner3D::UpdateCoveredAreas"中调用
 void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_viewpoint,
                                     const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager)
 {
@@ -257,14 +256,14 @@ void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_view
     return;
   }
   geometry_msgs::Point robot_position = robot_viewpoint.getPosition();
-  double sensor_range = viewpoint_manager->GetSensorRange();
+  double sensor_range = viewpoint_manager->GetSensorRange();  // param: "kSensorRange"(10.0)
   double coverage_occlusion_thr = viewpoint_manager->GetCoverageOcclusionThr();
-  double coverage_dilation_radius = viewpoint_manager->GetCoverageDilationRadius();
+  double coverage_dilation_radius = viewpoint_manager->GetCoverageDilationRadius();  // "kCoverageDilationRadius"(1.0)
   std::vector<int> covered_point_indices;
   double vertical_fov_ratio = 0.3;  // bigger fov than viewpoints
   double diff_z_max = sensor_range * vertical_fov_ratio;
   double xy_dist_threshold = 3 * (parameters_.kPlannerCloudDwzLeafSize / 2) / 0.3;
-  double z_diff_threshold = 3 * parameters_.kPlannerCloudDwzLeafSize;
+  double z_diff_threshold = 3 * parameters_.kPlannerCloudDwzLeafSize;  // "kPlannerCloudDwzLeafSize"(0.2)
   for (int i = 0; i < planner_cloud_->cloud_->points.size(); i++)
   {
     PlannerCloudPointType point = planner_cloud_->cloud_->points[i];
@@ -273,6 +272,7 @@ void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_view
       planner_cloud_->cloud_->points[i].g = 255;
       continue;
     }
+    // 当前FOV内可见的点云设置为covered
     if (std::abs(point.z - robot_position.z) < diff_z_max)
     {
       if (misc_utils_ns::InFOVSimple(Eigen::Vector3d(point.x, point.y, point.z),
@@ -287,7 +287,7 @@ void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_view
         }
       }
     }
-    // mark covered by visited viewpoints
+    // mark covered by visited viewpoints(rviz可视化为红色)
     for (const auto& viewpoint_ind : viewpoint_manager->candidate_indices_)
     {
       if (viewpoint_manager->ViewPointVisited(viewpoint_ind))
@@ -307,11 +307,12 @@ void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_view
   for (const auto& point : planner_cloud_->cloud_->points)
   {
     PlannerCloudPointType squeezed_point = point;
-    squeezed_point.z = point.z / parameters_.kCoverCloudZSqueezeRatio;
+    squeezed_point.z = point.z / parameters_.kCoverCloudZSqueezeRatio;  // (2.0)
     squeezed_planner_cloud_->cloud_->points.push_back(squeezed_point);
   }
   squeezed_planner_cloud_kdtree_->setInputCloud(squeezed_planner_cloud_->cloud_);
 
+  // 确保附近的点也都mark(填充)为covered
   for (const auto& ind : covered_point_indices)
   {
     PlannerCloudPointType point = planner_cloud_->cloud_->points[ind];
@@ -328,6 +329,7 @@ void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_view
     }
   }
 
+  // 更新"pointcloud_manager_"中的"pointcloud_grid_"信息
   for (int i = 0; i < planner_cloud_->cloud_->points.size(); i++)
   {
     PlannerCloudPointType point = planner_cloud_->cloud_->points[i];
@@ -341,6 +343,7 @@ void PlanningEnv::UpdateCoveredArea(const lidar_model_ns::LiDARModel& robot_view
   }
 }
 
+// "SensorCoveragePlanner3D::UpdateCoveredAreas"中调用
 void PlanningEnv::GetUncoveredArea(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
                                    int& uncovered_point_num, int& uncovered_frontier_point_num)
 {
@@ -369,6 +372,7 @@ void PlanningEnv::GetUncoveredArea(const std::shared_ptr<viewpoint_manager_ns::V
       {
         if (viewpoint_manager->VisibleByViewPoint<PlannerCloudPointType>(point, viewpoint_ind))
         {
+          // unvisited viewpoint(rviz可视化为非红色)可见的points，加为Uncovered
           viewpoint_manager->AddUncoveredPoint(viewpoint_ind, uncovered_point_num);
           observed = true;
         }
@@ -385,6 +389,7 @@ void PlanningEnv::GetUncoveredArea(const std::shared_ptr<viewpoint_manager_ns::V
       uncovered_point_num++;
     }
   }
+  uncovered_cloud_->Publish();
 
   // Check uncovered frontiers
   if (parameters_.kUseFrontier)
@@ -416,6 +421,7 @@ void PlanningEnv::GetUncoveredArea(const std::shared_ptr<viewpoint_manager_ns::V
       }
     }
   }
+  uncovered_frontier_cloud_->Publish();
 }
 
 void PlanningEnv::GetVisualizationPointCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr vis_cloud)

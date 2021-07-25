@@ -63,6 +63,7 @@ public:
       cloud_dwz_filter_.setLeafSize(kCloudDwzFilterLeafSize, kCloudDwzFilterLeafSize, kCloudDwzFilterLeafSize);
       cloud_dwz_filter_.filter(*(pointcloud_grid_->GetCell(i)));
     }
+    // std::cout << "pointcloud_grid_number: " << pointcloud_grid_->GetCellNumber() << std::endl;
   }
 
   void GetPointCloud(PCLCloudType& cloud_out);

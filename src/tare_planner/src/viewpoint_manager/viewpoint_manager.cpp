@@ -82,6 +82,7 @@ ViewPointManager::ViewPointManager(ros::NodeHandle& nh) : initialized_(false)
   grid_ = std::make_unique<rolling_grid_ns::RollingGrid>(vp_.kNumber);
   origin_ = Eigen::Vector3d::Zero();
 
+  // kViewPointNumber = kNumber.x() * kNumber.y() * kNumber.z();
   viewpoints_.resize(vp_.kViewPointNumber);
   for (int x = 0; x < vp_.kNumber.x(); x++)
   {
@@ -179,7 +180,7 @@ void ViewPointManager::ComputeInRangeNeighborIndices()
   for (int i = 0; i < in_range_neighbor_indices_.size(); i++)
   {
     pcl::PointXYZ point = cloud->points[i];
-    kdtree->radiusSearch(point, vp_.kNeighborRange, in_range_indices, in_range_sqdist);
+    kdtree->radiusSearch(point, vp_.kNeighborRange, in_range_indices, in_range_sqdist);  // kNeighborRange(3.0)
     for (const auto& ind : in_range_indices)
     {
       in_range_neighbor_indices_[i].push_back(ind);
@@ -277,6 +278,7 @@ bool ViewPointManager::UpdateRobotPosition(const Eigen::Vector3d& robot_position
           position.x = origin_.x() + x * vp_.kResolution.x() + vp_.kResolution.x() / 2.0;
           position.y = origin_.y() + y * vp_.kResolution.y() + vp_.kResolution.y() / 2.0;
           position.z = robot_position.z();
+          // viewpoints在局部坐标下的采样位置(单位m)
           SetViewPointPosition(ind, position, true);
           ResetViewPoint(ind, true);
         }
@@ -284,10 +286,13 @@ bool ViewPointManager::UpdateRobotPosition(const Eigen::Vector3d& robot_position
     }
   }
   Eigen::Vector3i robot_grid_sub;
+  // diff: 当前机器人在局部地图下相对于原点的位置
   Eigen::Vector3d diff = robot_position_ - origin_;
   Eigen::Vector3i sub = Eigen::Vector3i::Zero();
   for (int i = 0; i < vp_.dimension_; i++)
   {
+    // kRolloverStepsize = "viewpoint_manager/number_" / 5 (每个小格子的vp数量), kResolution = "viewpoint_manager/resolution_"
+    // 局部地图包含5*5个小格子(subspaces)
     robot_grid_sub(i) = diff(i) > 0 ? static_cast<int>(diff(i) / (vp_.kRolloverStepsize(i) * vp_.kResolution(i))) : -1;
   }
 
@@ -296,6 +301,12 @@ bool ViewPointManager::UpdateRobotPosition(const Eigen::Vector3d& robot_position
   {
     sub_diff(i) = (vp_.kNumber(i) / vp_.kRolloverStepsize(i)) / 2 - robot_grid_sub(i);
   }
+  // std::cout << "diff x: " << diff.x() << " y: " << diff.y() << " z: " << diff.z()
+  //           << std::endl;
+  // std::cout << "robot_grid_sub x: " << robot_grid_sub.x() << " y: " << robot_grid_sub.y() << " z: " << robot_grid_sub.z()
+  //           << std::endl;
+  // std::cout << "sub_diff x: " << sub_diff.x() << " y: " << sub_diff.y() << " z: " << sub_diff.z()
+  //           << std::endl;
 
   if (sub_diff.x() == 0 && sub_diff.y() == 0 && sub_diff.z() == 0)
   {
@@ -851,11 +862,14 @@ void ViewPointManager::UpdateViewPointVisited(const std::vector<Eigen::Vector3d>
     {
       continue;
     }
+    // 确定所在的viewpoint（离散的）区域
     Eigen::Vector3i viewpoint_sub = GetViewPointSub(position);
     if (grid_->InRange(viewpoint_sub))
     {
       int viewpoint_ind = grid_->Sub2Ind(viewpoint_sub);
       SetViewPointVisited(viewpoint_ind, true);
+      // 当前viewpoint半径范围kNeighborRange(3.0)内的都设置为visited
+      // TODO: 检查联通性？
       for (const auto& neighbor_viewpoint_ind : in_range_neighbor_indices_[viewpoint_ind])
       {
         MY_ASSERT(grid_->InRange(neighbor_viewpoint_ind));
@@ -870,6 +884,7 @@ void ViewPointManager::UpdateViewPointVisited(std::unique_ptr<grid_world_ns::Gri
 {
   for (int i = 0; i < viewpoints_.size(); i++)
   {
+    // 一整个cell内的viewpoint都设置为visited
     geometry_msgs::Point viewpoint_position = GetViewPointPosition(i, true);
     int cell_ind = grid_world->GetCellInd(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z);
     if (grid_world->IndInBound((cell_ind)))
@@ -883,7 +898,7 @@ void ViewPointManager::UpdateViewPointVisited(std::unique_ptr<grid_world_ns::Gri
   }
 }
 
-void ViewPointManager::SetViewPointHeightWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
+void ViewPointManager:: SetViewPointHeightWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
                                                      double terrain_height_threshold)
 {
   // Set the height of the viewpoint nearby the robot to be the height of the robot, in case there is no terrain cloud

@@ -21,14 +21,16 @@ bool PlannerParameters::ReadParameters(ros::NodeHandle& nh)
       misc_utils_ns::getParam<std::string>(nh, "sub_state_estimation_topic_", "/state_estimation_at_scan");
   sub_registered_scan_topic_ =
       misc_utils_ns::getParam<std::string>(nh, "sub_registered_scan_topic_", "/registered_scan");
-  sub_terrain_map_topic_ = misc_utils_ns::getParam<std::string>(nh, "sub_terrain_map_topic_", "/terrain_map");
+  sub_terrain_map_topic_ =
+      misc_utils_ns::getParam<std::string>(nh, "sub_terrain_map_topic_", "/terrain_map");
   sub_terrain_map_ext_topic_ =
       misc_utils_ns::getParam<std::string>(nh, "sub_terrain_map_ext_topic_", "/terrain_map_ext");
   sub_coverage_boundary_topic_ =
       misc_utils_ns::getParam<std::string>(nh, "sub_coverage_boundary_topic_", "/coverage_boundary");
   sub_viewpoint_boundary_topic_ =
       misc_utils_ns::getParam<std::string>(nh, "sub_viewpoint_boundary_topic_", "/viewpoint_boundary");
-  sub_nogo_boundary_topic_ = misc_utils_ns::getParam<std::string>(nh, "sub_nogo_boundary_topic_", "/nogo_boundary");
+  sub_nogo_boundary_topic_ =
+      misc_utils_ns::getParam<std::string>(nh, "sub_nogo_boundary_topic_", "/nogo_boundary");
   pub_exploration_finish_topic_ =
       misc_utils_ns::getParam<std::string>(nh, "pub_exploration_finish_topic_", "exploration_finish");
   pub_runtime_breakdown_topic_ =
@@ -57,41 +59,42 @@ bool PlannerParameters::ReadParameters(ros::NodeHandle& nh)
 
 void PlannerData::Initialize(ros::NodeHandle& nh, ros::NodeHandle& nh_p)
 {
-  keypose_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(nh, "keypose_cloud", kWorldFrameID);
-  registered_scan_stack_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>>(nh, "registered_scan_stack", kWorldFrameID);
-  registered_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "registered_cloud", kWorldFrameID);
-  large_terrain_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "terrain_cloud_large", kWorldFrameID);
-  terrain_collision_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "terrain_collision_cloud", kWorldFrameID);
-  terrain_ext_collision_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "terrain_ext_collision_cloud", kWorldFrameID);
-  viewpoint_vis_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "viewpoint_vis_cloud", kWorldFrameID);
-  grid_world_vis_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "grid_world_vis_cloud", kWorldFrameID);
-  exploration_path_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "bspline_path_cloud", kWorldFrameID);
+  // make_unique实例化pointcloud_utils_ns::PCLCloud类型，包括一个pcl::PointCloud对象和一个ros::Publisher
+  keypose_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<PlannerCloudPointType>>(
+      nh, "planner_data/keypose_cloud", kWorldFrameID);
+  registered_scan_stack_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>>(
+      nh, "planner_data/registered_scan_stack", kWorldFrameID);
+  registered_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/registered_cloud", kWorldFrameID);
+  large_terrain_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/terrain_cloud_large", kWorldFrameID);
+  terrain_collision_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/terrain_collision_cloud", kWorldFrameID);
+  terrain_ext_collision_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/terrain_ext_collision_cloud", kWorldFrameID);
+  viewpoint_vis_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/viewpoint_vis_cloud", kWorldFrameID);
+  grid_world_vis_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/grid_world_vis_cloud", kWorldFrameID);
+  exploration_path_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/bspline_path_cloud", kWorldFrameID);
 
   selected_viewpoint_vis_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
-      nh, "selected_viewpoint_vis_cloud", kWorldFrameID);
-  exploring_cell_vis_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "exploring_cell_vis_cloud", kWorldFrameID);
-  collision_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "collision_cloud", kWorldFrameID);
-  lookahead_point_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "lookahead_point_cloud", kWorldFrameID);
-  keypose_graph_vis_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "keypose_graph_cloud", kWorldFrameID);
+      nh, "planner_data/selected_viewpoint_vis_cloud", kWorldFrameID);
+  exploring_cell_vis_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/exploring_cell_vis_cloud", kWorldFrameID);
+  collision_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/collision_cloud", kWorldFrameID);
+  lookahead_point_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/lookahead_point_cloud", kWorldFrameID);
+  keypose_graph_vis_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/keypose_graph_cloud", kWorldFrameID);
   viewpoint_in_collision_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
-      nh, "viewpoint_in_collision_cloud_", kWorldFrameID);
+      nh, "planner_data/viewpoint_in_collision_cloud_", kWorldFrameID);
   // rolling_occupancy_cloud_ =
   //     std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "rolling_occupancy_cloud", kWorldFrameID);
-  point_cloud_manager_neighbor_cloud_ =
-      std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(nh, "pointcloud_manager_cloud", kWorldFrameID);
+  point_cloud_manager_neighbor_cloud_ = std::make_unique<pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>>(
+      nh, "planner_data/pointcloud_manager_cloud", kWorldFrameID);
 
   planning_env_ = std::make_unique<planning_env_ns::PlanningEnv>(nh, nh_p);
   viewpoint_manager_ = std::make_shared<viewpoint_manager_ns::ViewPointManager>(nh_p);
@@ -172,7 +175,7 @@ bool SensorCoveragePlanner3D::initialize(ros::NodeHandle& nh, ros::NodeHandle& n
   // pd_.robot_viewpoint_.setCloudDWZResol(pp_.kKeyposeCloudDwzFilterLeafSize);
   lidar_model_ns::LiDARModel::setCloudDWZResol(pd_.planning_env_->GetPlannerCloudResolution());
 
-  execution_timer_ = nh.createTimer(ros::Duration(1.0), &SensorCoveragePlanner3D::execute, this);
+  execution_timer_ = nh.createTimer(ros::Duration(0.5), &SensorCoveragePlanner3D::execute, this);
 
   exploration_start_sub_ =
       nh.subscribe(pp_.sub_start_exploration_topic_, 1, &SensorCoveragePlanner3D::ExplorationStartCallback, this);
@@ -213,6 +216,7 @@ void SensorCoveragePlanner3D::ExplorationStartCallback(const std_msgs::Bool::Con
   }
 }
 
+// "state_estimation_at_scan" topic的回调函数
 void SensorCoveragePlanner3D::StateEstimationCallback(const nav_msgs::Odometry::ConstPtr& state_estimation_msg)
 {
   pd_.robot_position_ = state_estimation_msg->pose.pose.position;
@@ -241,6 +245,7 @@ void SensorCoveragePlanner3D::StateEstimationCallback(const nav_msgs::Odometry::
   initialized_ = true;
 }
 
+// "/registered_scan" topic(frame_id为map)的回调函数
 void SensorCoveragePlanner3D::RegisteredScanCallback(const sensor_msgs::PointCloud2ConstPtr& registered_scan_msg)
 {
   if (!initialized_)
@@ -253,6 +258,7 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(const sensor_msgs::PointClo
   {
     return;
   }
+  // 拼接传感器输入的点云
   *(pd_.registered_scan_stack_->cloud_) += *(registered_scan_tmp);
   pointcloud_downsizer_.Downsize(registered_scan_tmp, pp_.kKeyposeCloudDwzFilterLeafSize,
                                  pp_.kKeyposeCloudDwzFilterLeafSize, pp_.kKeyposeCloudDwzFilterLeafSize);
@@ -272,10 +278,10 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(const sensor_msgs::PointClo
 
     pointcloud_downsizer_.Downsize(pd_.registered_scan_stack_->cloud_, pp_.kKeyposeCloudDwzFilterLeafSize,
                                    pp_.kKeyposeCloudDwzFilterLeafSize, pp_.kKeyposeCloudDwzFilterLeafSize);
-
+    // 连续5帧拼接点云
     pd_.keypose_cloud_->cloud_->clear();
     pcl::copyPointCloud(*(pd_.registered_scan_stack_->cloud_), *(pd_.keypose_cloud_->cloud_));
-    // pd_.keypose_cloud_->Publish();
+    pd_.keypose_cloud_->Publish();
     pd_.registered_scan_stack_->cloud_->clear();
     keypose_cloud_update_ = true;
   }
@@ -381,6 +387,7 @@ void SensorCoveragePlanner3D::NogoBoundaryCallback(const geometry_msgs::PolygonS
   pd_.nogo_boundary_marker_->Publish();
 }
 
+// step1
 void SensorCoveragePlanner3D::SendInitialWaypoint()
 {
   // send waypoint ahead
@@ -398,144 +405,32 @@ void SensorCoveragePlanner3D::SendInitialWaypoint()
   waypoint_pub_.publish(waypoint);
 }
 
-void SensorCoveragePlanner3D::UpdateKeyposeGraph()
-{
-  misc_utils_ns::Timer update_keypose_graph_timer("update keypose graph");
-  update_keypose_graph_timer.Start();
-
-  pd_.keypose_graph_->GetMarker(pd_.keypose_graph_node_marker_->marker_, pd_.keypose_graph_edge_marker_->marker_);
-  // pd_.keypose_graph_node_marker_->Publish();
-  pd_.keypose_graph_edge_marker_->Publish();
-  pd_.keypose_graph_vis_cloud_->cloud_->clear();
-  pd_.keypose_graph_->CheckLocalCollision(pd_.robot_position_, pd_.viewpoint_manager_);
-  pd_.keypose_graph_->CheckConnectivity(pd_.robot_position_);
-  pd_.keypose_graph_->GetVisualizationCloud(pd_.keypose_graph_vis_cloud_->cloud_);
-  pd_.keypose_graph_vis_cloud_->Publish();
-
-  update_keypose_graph_timer.Stop(false);
-}
-
-int SensorCoveragePlanner3D::UpdateViewPoints()
-{
-  misc_utils_ns::Timer collision_cloud_timer("update collision cloud");
-  collision_cloud_timer.Start();
-  pd_.collision_cloud_->cloud_ = pd_.planning_env_->GetCollisionCloud();
-  collision_cloud_timer.Stop(false);
-
-  misc_utils_ns::Timer viewpoint_manager_update_timer("update viewpoint manager");
-  viewpoint_manager_update_timer.Start();
-  if (pp_.kUseTerrainHeight)
-  {
-    pd_.viewpoint_manager_->SetViewPointHeightWithTerrain(pd_.large_terrain_cloud_->cloud_);
-  }
-  if (pp_.kCheckTerrainCollision)
-  {
-    *(pd_.collision_cloud_->cloud_) += *(pd_.terrain_collision_cloud_->cloud_);
-    *(pd_.collision_cloud_->cloud_) += *(pd_.terrain_ext_collision_cloud_->cloud_);
-  }
-  pd_.viewpoint_manager_->CheckViewPointCollision(pd_.collision_cloud_->cloud_);
-  pd_.viewpoint_manager_->CheckViewPointLineOfSight();
-  pd_.viewpoint_manager_->CheckViewPointConnectivity();
-  int viewpoint_candidate_count = pd_.viewpoint_manager_->GetViewPointCandidate();
-
-  UpdateVisitedPositions();
-  pd_.viewpoint_manager_->UpdateViewPointVisited(pd_.visited_positions_);
-  pd_.viewpoint_manager_->UpdateViewPointVisited(pd_.grid_world_);
-
-  // For visualization
-  pd_.collision_cloud_->Publish();
-  // pd_.collision_grid_cloud_->Publish();
-  pd_.viewpoint_manager_->GetCollisionViewPointVisCloud(pd_.viewpoint_in_collision_cloud_->cloud_);
-  pd_.viewpoint_in_collision_cloud_->Publish();
-
-  viewpoint_manager_update_timer.Stop(false);
-  return viewpoint_candidate_count;
-}
-
-void SensorCoveragePlanner3D::UpdateViewPointCoverage()
-{
-  // Update viewpoint coverage
-  misc_utils_ns::Timer update_coverage_timer("update viewpoint coverage");
-  update_coverage_timer.Start();
-  pd_.viewpoint_manager_->UpdateViewPointCoverage<PlannerCloudPointType>(pd_.planning_env_->GetDiffCloud());
-  pd_.viewpoint_manager_->UpdateRolledOverViewPointCoverage<PlannerCloudPointType>(
-      pd_.planning_env_->GetStackedCloud());
-  // std::cout << "diff cloud size: " << pd_.planning_env_->GetDiffCloud()->points.size() << std::endl;
-  // std::cout << "collision cloud size: " << pd_.planning_env_->GetCollisionCloud()->points.size() << std::endl;
-  // std::cout << "planner cloud size: " << pd_.planning_env_->GetPlannerCloud()->points.size() << std::endl;
-  // Update robot coverage
-  pd_.robot_viewpoint_.ResetCoverage();
-  geometry_msgs::Pose robot_pose;
-  robot_pose.position = pd_.robot_position_;
-  pd_.robot_viewpoint_.setPose(robot_pose);
-  UpdateRobotViewPointCoverage();
-  update_coverage_timer.Stop(false);
-}
-
-void SensorCoveragePlanner3D::UpdateRobotViewPointCoverage()
-{
-  pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = pd_.planning_env_->GetCollisionCloud();
-  for (const auto& point : cloud->points)
-  {
-    if (pd_.viewpoint_manager_->InFOVAndRange(
-            Eigen::Vector3d(point.x, point.y, point.z),
-            Eigen::Vector3d(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z)))
-    {
-      pd_.robot_viewpoint_.UpdateCoverage<pcl::PointXYZI>(point);
-    }
-  }
-}
-
-void SensorCoveragePlanner3D::UpdateCoveredAreas(int& uncovered_point_num, int& uncovered_frontier_point_num)
-{
-  // Update covered area
-  misc_utils_ns::Timer update_coverage_area_timer("update covered area");
-  update_coverage_area_timer.Start();
-  pd_.planning_env_->UpdateCoveredArea(pd_.robot_viewpoint_, pd_.viewpoint_manager_);
-  update_coverage_area_timer.Stop(false);
-  misc_utils_ns::Timer get_uncovered_area_timer("get uncovered area");
-  get_uncovered_area_timer.Start();
-  pd_.planning_env_->GetUncoveredArea(pd_.viewpoint_manager_, uncovered_point_num, uncovered_frontier_point_num);
-  // std::cout << "uncovered point number: " << uncovered_point_num << std::endl;
-  // std::cout << "uncovered frontier point number: " << uncovered_frontier_point_num << std::endl;
-  get_uncovered_area_timer.Stop(false);
-  pd_.planning_env_->PublishUncoveredCloud();
-  pd_.planning_env_->PublishUncoveredFrontierCloud();
-}
-
-void SensorCoveragePlanner3D::UpdateVisitedPositions()
-{
-  Eigen::Vector3d robot_current_position(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z);
-  bool existing = false;
-  for (int i = 0; i < pd_.visited_positions_.size(); i++)
-  {
-    // TODO: parameterize this
-    if ((robot_current_position - pd_.visited_positions_[i]).norm() < 1)
-    {
-      existing = true;
-      break;
-    }
-  }
-  if (!existing)
-  {
-    pd_.visited_positions_.push_back(robot_current_position);
-  }
-}
-
+// step2
 void SensorCoveragePlanner3D::UpdateGlobalRepresentation()
 {
   pd_.local_coverage_planner_->SetRobotPosition(
       Eigen::Vector3d(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z));
+  // 机器人移动后，判断局部viewpoint地图是否滚动(更新)
   bool viewpoint_rollover = pd_.viewpoint_manager_->UpdateRobotPosition(
       Eigen::Vector3d(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z));
+
+  misc_utils_ns::Timer grid_world_timer("update grid_world");
+  grid_world_timer.Start();
+
+  // "grid_world_"管理global的subspaces(以cell为单位)
   if (!pd_.grid_world_->Initialized() || viewpoint_rollover)
   {
     pd_.grid_world_->UpdateNeighborCells(pd_.robot_position_);
   }
+  grid_world_timer.Stop(true);
 
+  misc_utils_ns::Timer pointcloud_manager_timer("update pointcloud_manager");
+  pointcloud_manager_timer.Start();
+
+  // 其中的"pointcloud_manager_"维护一个全局的点云地图
   pd_.planning_env_->UpdateRobotPosition(pd_.robot_position_);
   pd_.planning_env_->GetVisualizationPointCloud(pd_.point_cloud_manager_neighbor_cloud_->cloud_);
-  pd_.point_cloud_manager_neighbor_cloud_->Publish();
+  pd_.point_cloud_manager_neighbor_cloud_->Publish();  // topic_name: "/pointcloud_manager_cloud"
 
   // DEBUG
   Eigen::Vector3d pointcloud_manager_neighbor_cells_origin =
@@ -546,13 +441,16 @@ void SensorCoveragePlanner3D::UpdateGlobalRepresentation()
   pointcloud_manager_neighbor_cells_origin_point.point.x = pointcloud_manager_neighbor_cells_origin.x();
   pointcloud_manager_neighbor_cells_origin_point.point.y = pointcloud_manager_neighbor_cells_origin.y();
   pointcloud_manager_neighbor_cells_origin_point.point.z = pointcloud_manager_neighbor_cells_origin.z();
+  // topic_name: "pointcloud_manager_neighbor_cells_origin"
   pointcloud_manager_neighbor_cells_origin_pub_.publish(pointcloud_manager_neighbor_cells_origin_point);
 
   if (exploration_finished_)
   {
     pd_.planning_env_->SetUseFrontier(false);
   }
+  // pub "~/planner_cloud" and "~/filtered_frontier_cloud"
   pd_.planning_env_->UpdateKeyposeCloud<PlannerCloudPointType>(pd_.keypose_cloud_->cloud_);
+  pointcloud_manager_timer.Stop(true);
 
   int closest_node_ind = pd_.keypose_graph_->GetClosestNodeInd(pd_.robot_position_);
   geometry_msgs::Point closest_node_position = pd_.keypose_graph_->GetClosestNodePosition(pd_.robot_position_);
@@ -580,6 +478,147 @@ void SensorCoveragePlanner3D::UpdateGlobalRepresentation()
   // pd_.rolling_occupancy_cloud_->Publish();
 }
 
+// step3, update viewpoint manager
+int SensorCoveragePlanner3D::UpdateViewPoints()
+{
+  misc_utils_ns::Timer collision_cloud_timer("update collision cloud");
+  collision_cloud_timer.Start();
+  pd_.collision_cloud_->cloud_ = pd_.planning_env_->GetCollisionCloud();
+  collision_cloud_timer.Stop(false);
+
+  misc_utils_ns::Timer viewpoint_manager_update_timer("update viewpoint manager");
+  viewpoint_manager_update_timer.Start();
+  if (pp_.kUseTerrainHeight)
+  {
+    pd_.viewpoint_manager_->SetViewPointHeightWithTerrain(pd_.large_terrain_cloud_->cloud_);
+  }
+  if (pp_.kCheckTerrainCollision)
+  {
+    *(pd_.collision_cloud_->cloud_) += *(pd_.terrain_collision_cloud_->cloud_);
+    *(pd_.collision_cloud_->cloud_) += *(pd_.terrain_ext_collision_cloud_->cloud_);
+  }
+  pd_.collision_cloud_->Publish();  // topic_name: "collision_cloud"
+  // pd_.collision_grid_cloud_->Publish();
+
+  pd_.viewpoint_manager_->CheckViewPointCollision(pd_.collision_cloud_->cloud_);
+  pd_.viewpoint_manager_->CheckViewPointLineOfSight();
+  pd_.viewpoint_manager_->CheckViewPointConnectivity();
+  int viewpoint_candidate_count = pd_.viewpoint_manager_->GetViewPointCandidate();
+
+  UpdateVisitedPositions();  // push "robot_position_" to "visited_positions_"
+  // 当前位置周围以及当前cell内的viewpoint都设置为visited
+  pd_.viewpoint_manager_->UpdateViewPointVisited(pd_.visited_positions_);
+  pd_.viewpoint_manager_->UpdateViewPointVisited(pd_.grid_world_);
+  pd_.viewpoint_manager_->GetVisualizationCloud(pd_.viewpoint_vis_cloud_->cloud_);
+  // 包含I通道数据，已访问的vp为-1(可视化为红色)，其余表示"CoveredPointNum"(s紫色最大)
+  pd_.viewpoint_vis_cloud_->Publish();
+
+  pd_.viewpoint_manager_->GetCollisionViewPointVisCloud(pd_.viewpoint_in_collision_cloud_->cloud_);
+  pd_.viewpoint_in_collision_cloud_->Publish();  // "viewpoint_in_collision_cloud_"
+
+  viewpoint_manager_update_timer.Stop(true);
+  return viewpoint_candidate_count;
+}
+
+// "UpdateViewPoints(step3)"中调用
+void SensorCoveragePlanner3D::UpdateVisitedPositions()
+{
+  Eigen::Vector3d robot_current_position(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z);
+  bool existing = false;
+  for (int i = 0; i < pd_.visited_positions_.size(); i++)
+  {
+    // TODO: parameterize this
+    if ((robot_current_position - pd_.visited_positions_[i]).norm() < 1)
+    {
+      existing = true;
+      break;
+    }
+  }
+  if (!existing)
+  {
+    pd_.visited_positions_.push_back(robot_current_position);
+  }
+}
+
+// step4
+void SensorCoveragePlanner3D::UpdateKeyposeGraph()
+{
+  misc_utils_ns::Timer update_keypose_graph_timer("update keypose graph");
+  update_keypose_graph_timer.Start();
+
+  // graph_node可视化，绿色表示已经connected的node，红色未连接
+  pd_.keypose_graph_->GetMarker(pd_.keypose_graph_node_marker_->marker_, pd_.keypose_graph_edge_marker_->marker_);
+  pd_.keypose_graph_node_marker_->Publish();
+  pd_.keypose_graph_edge_marker_->Publish();
+
+  pd_.keypose_graph_vis_cloud_->cloud_->clear();
+  pd_.keypose_graph_->CheckLocalCollision(pd_.robot_position_, pd_.viewpoint_manager_);
+  pd_.keypose_graph_->CheckConnectivity(pd_.robot_position_);
+  pd_.keypose_graph_->GetVisualizationCloud(pd_.keypose_graph_vis_cloud_->cloud_);
+  pd_.keypose_graph_vis_cloud_->Publish();
+
+  update_keypose_graph_timer.Stop(true);
+}
+
+// step5
+void SensorCoveragePlanner3D::UpdateViewPointCoverage()
+{
+  // Update viewpoint coverage
+  misc_utils_ns::Timer update_coverage_timer("update viewpoint coverage");
+  update_coverage_timer.Start();
+  pd_.viewpoint_manager_->UpdateViewPointCoverage<PlannerCloudPointType>(pd_.planning_env_->GetDiffCloud());
+  pd_.viewpoint_manager_->UpdateRolledOverViewPointCoverage<PlannerCloudPointType>(
+      pd_.planning_env_->GetStackedCloud());
+  // std::cout << "diff cloud size: " << pd_.planning_env_->GetDiffCloud()->points.size() << std::endl;
+  // std::cout << "collision cloud size: " << pd_.planning_env_->GetCollisionCloud()->points.size() << std::endl;
+  // std::cout << "planner cloud size: " << pd_.planning_env_->GetPlannerCloud()->points.size() << std::endl;
+  // Update robot coverage
+  pd_.robot_viewpoint_.ResetCoverage();
+  geometry_msgs::Pose robot_pose;
+  robot_pose.position = pd_.robot_position_;
+  pd_.robot_viewpoint_.setPose(robot_pose);
+  UpdateRobotViewPointCoverage();
+  update_coverage_timer.Stop(true);
+}
+
+// "UpdateViewPointCoverage(step5)"中调用
+void SensorCoveragePlanner3D::UpdateRobotViewPointCoverage()
+{
+  pcl::PointCloud<pcl::PointXYZI>::Ptr cloud = pd_.planning_env_->GetCollisionCloud();
+  for (const auto& point : cloud->points)
+  {
+    if (pd_.viewpoint_manager_->InFOVAndRange(
+            Eigen::Vector3d(point.x, point.y, point.z),
+            Eigen::Vector3d(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z)))
+    {
+      pd_.robot_viewpoint_.UpdateCoverage<pcl::PointXYZI>(point);
+    }
+  }
+}
+
+// step6
+void SensorCoveragePlanner3D::UpdateCoveredAreas(int& uncovered_point_num, int& uncovered_frontier_point_num)
+{
+  // Update covered area
+  misc_utils_ns::Timer update_coverage_area_timer("update covered area");
+  update_coverage_area_timer.Start();
+  // 更新"PlanningEnv::planner_cloud_"，当前位置以及已访问的viewpoints视野内的点云mark为covered(g=255)
+  pd_.planning_env_->UpdateCoveredArea(pd_.robot_viewpoint_, pd_.viewpoint_manager_);
+  update_coverage_area_timer.Stop(true);
+
+  misc_utils_ns::Timer get_uncovered_area_timer("get uncovered area");
+  get_uncovered_area_timer.Start();
+  // 更新"PlanningEnv::uncovered_cloud_"以及"uncovered_frontier_cloud_"
+  pd_.planning_env_->GetUncoveredArea(pd_.viewpoint_manager_, uncovered_point_num, uncovered_frontier_point_num);
+  // std::cout << "uncovered point number: " << uncovered_point_num << std::endl;
+  // std::cout << "uncovered frontier point number: " << uncovered_frontier_point_num << std::endl;
+  get_uncovered_area_timer.Stop(true);
+
+  // pd_.planning_env_->PublishUncoveredCloud();  // topic: "uncovered_cloud"
+  // pd_.planning_env_->PublishUncoveredFrontierCloud();  // topic: "uncovered_frontier_cloud"
+}
+
+// step7
 void SensorCoveragePlanner3D::GlobalPlanning(std::vector<int>& global_cell_tsp_order,
                                              exploration_path_ns::ExplorationPath& global_path)
 {
@@ -594,19 +633,21 @@ void SensorCoveragePlanner3D::GlobalPlanning(std::vector<int>& global_cell_tsp_o
 
   global_path = pd_.grid_world_->SolveGlobalTSP(pd_.viewpoint_manager_, global_cell_tsp_order, pd_.keypose_graph_);
 
-  global_tsp_timer.Stop(false);
+  global_tsp_timer.Stop(true);
   global_planning_runtime_ = global_tsp_timer.GetDuration("ms");
+  // ROS_INFO("Global Planner runtime: %d ms", global_planning_runtime_);
 }
 
 void SensorCoveragePlanner3D::PublishGlobalPlanningVisualization(
     const exploration_path_ns::ExplorationPath& global_path, const exploration_path_ns::ExplorationPath& local_path)
 {
+  // "~/global_path_full"(nav_msgs::Path)
   nav_msgs::Path global_path_full = global_path.GetPath();
   global_path_full.header.frame_id = "map";
   global_path_full.header.stamp = ros::Time::now();
   global_path_full_publisher_.publish(global_path_full);
-  // Get the part that connects with the local path
 
+  // Get the part that connects with the local path
   int start_index = 0;
   for (int i = 0; i < global_path.nodes_.size(); i++)
   {
@@ -618,7 +659,6 @@ void SensorCoveragePlanner3D::PublishGlobalPlanningVisualization(
     }
     start_index = i;
   }
-
   int end_index = global_path.nodes_.size() - 1;
   for (int i = global_path.nodes_.size() - 1; i >= 0; i--)
   {
@@ -659,21 +699,28 @@ void SensorCoveragePlanner3D::PublishGlobalPlanningVisualization(
   }
   global_path_trim.header.frame_id = "map";
   global_path_trim.header.stamp = ros::Time::now();
+  // "~/global_path"(nav_msgs::Path) 局部地图范围外的全局travel path
   global_path_publisher_.publish(global_path_trim);
 
   pd_.grid_world_->GetVisualizationCloud(pd_.grid_world_vis_cloud_->cloud_);
-  pd_.grid_world_vis_cloud_->Publish();
+  pd_.grid_world_vis_cloud_->Publish();  // topic: "~/grid_world_vis_cloud"
   pd_.grid_world_->GetMarker(pd_.grid_world_marker_->marker_);
+  // "~/grid_world_marker"(visualization_msgs::Marker) 黄色Marker表示"Covered"，绿色"Exploring"
   pd_.grid_world_marker_->Publish();
+
+  // topic: "~/exploration_path"
   nav_msgs::Path full_path = pd_.exploration_path_.GetPath();
   full_path.header.frame_id = "map";
   full_path.header.stamp = ros::Time::now();
-  // exploration_path_publisher_.publish(full_path);
+  exploration_path_publisher_.publish(full_path);
+
+  // topic: "bspline_path_cloud"
   pd_.exploration_path_.GetVisualizationCloud(pd_.exploration_path_cloud_->cloud_);
   pd_.exploration_path_cloud_->Publish();
   // pd_.planning_env_->PublishStackedCloud();
 }
 
+// step8
 void SensorCoveragePlanner3D::LocalPlanning(int uncovered_point_num, int uncovered_frontier_point_num,
                                             const exploration_path_ns::ExplorationPath& global_path,
                                             exploration_path_ns::ExplorationPath& local_path)
@@ -686,24 +733,31 @@ void SensorCoveragePlanner3D::LocalPlanning(int uncovered_point_num, int uncover
   }
   local_path = pd_.local_coverage_planner_->SolveLocalCoverageProblem(global_path, uncovered_point_num,
                                                                       uncovered_frontier_point_num);
-  local_tsp_timer.Stop(false);
+  local_tsp_timer.Stop(true);
+  // ROS_INFO("Local Planner runtime: %d ms", local_tsp_timer.GetDuration());
 }
 
 void SensorCoveragePlanner3D::PublishLocalPlanningVisualization(const exploration_path_ns::ExplorationPath& local_path)
 {
-  pd_.viewpoint_manager_->GetVisualizationCloud(pd_.viewpoint_vis_cloud_->cloud_);
-  pd_.viewpoint_vis_cloud_->Publish();
-  pd_.lookahead_point_cloud_->Publish();
+  // pd_.viewpoint_manager_->GetVisualizationCloud(pd_.viewpoint_vis_cloud_->cloud_);
+  // // 包含I通道数据，已访问的vp为-1(可视化为红色)，其余表示"CoveredPointNum"(s紫色最大)
+  // pd_.viewpoint_vis_cloud_->Publish();
+  // // I通道值为0或1，0表示"has_lookahead"
+  // pd_.lookahead_point_cloud_->Publish();
+
   nav_msgs::Path local_tsp_path = local_path.GetPath();
   local_tsp_path.header.frame_id = "map";
   local_tsp_path.header.stamp = ros::Time::now();
-  local_tsp_path_publisher_.publish(local_tsp_path);
+  local_tsp_path_publisher_.publish(local_tsp_path);  // "~/local_path"，连接viewpoints
+
   pd_.local_coverage_planner_->GetSelectedViewPointVisCloud(pd_.selected_viewpoint_vis_cloud_->cloud_);
+  // "selected_viewpoint"可视化，红色是当前vp，绿色青色为局部边缘的vp(连接global path)，其余紫色
   pd_.selected_viewpoint_vis_cloud_->Publish();
 
   // Visualize local planning horizon box
 }
 
+// step9
 exploration_path_ns::ExplorationPath SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
     const exploration_path_ns::ExplorationPath& global_path, const exploration_path_ns::ExplorationPath& local_path)
 {
@@ -770,10 +824,14 @@ exploration_path_ns::ExplorationPath SensorCoveragePlanner3D::ConcatenateGlobalL
   return full_path;
 }
 
+// step9
 bool SensorCoveragePlanner3D::GetLookAheadPoint(const exploration_path_ns::ExplorationPath& local_path,
                                                 const exploration_path_ns::ExplorationPath& global_path,
                                                 Eigen::Vector3d& lookahead_point)
 {
+  misc_utils_ns::Timer lookahead_timer("get lookahead point");
+  lookahead_timer.Start();
+
   Eigen::Vector3d robot_position(pd_.robot_position_.x, pd_.robot_position_.y, pd_.robot_position_.z);
 
   // Determine which direction to follow on the global path
@@ -1089,9 +1147,13 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(const exploration_path_ns::Explo
     point.x = local_path.nodes_[lookahead_i].position_.x();
     point.y = local_path.nodes_[lookahead_i].position_.y();
     point.z = local_path.nodes_[lookahead_i].position_.z();
-    point.intensity = 0;
+    point.intensity = 0.0;
     pd_.lookahead_point_cloud_->cloud_->points.push_back(point);
   }
+  // I通道值为0或1，0表示"has_lookahead"
+  pd_.lookahead_point_cloud_->Publish();
+
+  lookahead_timer.Stop(true);
   return true;
 }
 
@@ -1135,11 +1197,11 @@ void SensorCoveragePlanner3D::PublishRuntime()
 
   std_msgs::Int32MultiArray runtime_breakdown_msg;
   runtime_breakdown_msg.data.clear();
-  runtime_breakdown_msg.data.push_back(update_representation_runtime_);
-  runtime_breakdown_msg.data.push_back(local_viewpoint_sampling_runtime_);
-  runtime_breakdown_msg.data.push_back(local_path_finding_runtime_);
+  runtime_breakdown_msg.data.push_back(update_representation_runtime_);  // 耗时较大
+  runtime_breakdown_msg.data.push_back(local_viewpoint_sampling_runtime_);  // 几乎为0
+  runtime_breakdown_msg.data.push_back(local_path_finding_runtime_);  // 几乎为0
   runtime_breakdown_msg.data.push_back(global_planning_runtime_);
-  runtime_breakdown_msg.data.push_back(trajectory_optimization_runtime_);
+  runtime_breakdown_msg.data.push_back(trajectory_optimization_runtime_);  // 实际没有
   runtime_breakdown_msg.data.push_back(overall_runtime_);
   runtime_breakdown_pub_.publish(runtime_breakdown_msg);
 
@@ -1154,7 +1216,7 @@ void SensorCoveragePlanner3D::PublishRuntime()
 
   std_msgs::Float32 runtime_msg;
   runtime_msg.data = runtime / 1000.0;
-  runtime_pub_.publish(runtime_msg);
+  runtime_pub_.publish(runtime_msg);  // topic: "/runtime"
 }
 
 double SensorCoveragePlanner3D::GetRobotToHomeDistance()
@@ -1182,8 +1244,10 @@ void SensorCoveragePlanner3D::PrintExplorationStatus(std::string status, bool cl
   std::cout << std::endl << "\033[1;32m" << status << "\033[0m" << std::endl;
 }
 
+// timer, 1s执行周期
 void SensorCoveragePlanner3D::execute(const ros::TimerEvent&)
 {
+  ROS_INFO("SensorCoveragePlanner3D: Executing...");
   if (!pp_.kAutoStart && !start_exploration_)
   {
     ROS_INFO("Waiting for start signal");
@@ -1199,6 +1263,7 @@ void SensorCoveragePlanner3D::execute(const ros::TimerEvent&)
 
   if (!initialized_)
   {
+    // step1
     SendInitialWaypoint();
     start_time_ = ros::Time::now();
     return;
@@ -1207,14 +1272,17 @@ void SensorCoveragePlanner3D::execute(const ros::TimerEvent&)
   overall_processing_timer.Start();
   if (keypose_cloud_update_)
   {
+    // 在RegisteredScanCallback中更新，关键帧
     keypose_cloud_update_ = false;
 
     misc_utils_ns::Timer update_representation_timer("update representation");
     update_representation_timer.Start();
 
-    // Update grid world
+    // step2: Update grid world，更新"pd_.grid_world_"以及"pd_.planning_env_"两个变量
+    // 包括更新机器人的当前位置和环境信息(viewpoints、cells(subspace)、以及pointcloud)
     UpdateGlobalRepresentation();
 
+    // step3: 操作"pd_.viewpoint_manager_"
     int viewpoint_candidate_count = UpdateViewPoints();
     if (viewpoint_candidate_count == 0)
     {
@@ -1222,31 +1290,38 @@ void SensorCoveragePlanner3D::execute(const ros::TimerEvent&)
       return;
     }
 
+    // step4: "pd.keypose_graph_"在"registered_scan"的回调函数中添加新node
+    // 随着机器人探索增量式更新，用于规划global_path
     UpdateKeyposeGraph();
 
     int uncovered_point_num = 0;
     int uncovered_frontier_point_num = 0;
     if (!exploration_finished_)
     {
+      // step5: "pd_.viewpoint_manager_"操作，耗时最长
       UpdateViewPointCoverage();
+      // step6: "pd_.planning_env_"操作
       UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);
+      ROS_INFO("Candidate viewpoints: %d", viewpoint_candidate_count);
+      ROS_INFO("Uncovered point: %d, Uncovered frontier: %d", uncovered_point_num, uncovered_frontier_point_num);
     }
     else
     {
       pd_.viewpoint_manager_->ResetViewPointCoverage();
     }
 
-    update_representation_timer.Stop(false);
+    update_representation_timer.Stop(true);
     update_representation_runtime_ += update_representation_timer.GetDuration("ms");
 
-    // Global TSP
+    // step7: Global TSP
     std::vector<int> global_cell_tsp_order;
     exploration_path_ns::ExplorationPath global_path;
     GlobalPlanning(global_cell_tsp_order, global_path);
 
-    // Local TSP
+    // step8: Local TSP
     exploration_path_ns::ExplorationPath local_path;
     LocalPlanning(uncovered_point_num, uncovered_frontier_point_num, global_path, local_path);
+    PublishLocalPlanningVisualization(local_path);
 
     near_home_ = GetRobotToHomeDistance() < pp_.kRushHomeDist;
     at_home_ = GetRobotToHomeDistance() < pp_.kAtHomeDistThreshold;
@@ -1260,31 +1335,32 @@ void SensorCoveragePlanner3D::execute(const ros::TimerEvent&)
       }
       exploration_finished_ = true;
     }
-
     if (exploration_finished_ && at_home_ && !stopped_)
     {
       PrintExplorationStatus("Return home completed", false);
       stopped_ = true;
     }
+    PublishExplorationState();  // topic_name: "exploration_finish"
 
+    // step9: Get waypoint(lookahead point). "exploration_path_"一般情况下与"local_path"是一致的
     pd_.exploration_path_ = ConcatenateGlobalLocalPath(global_path, local_path);
-
-    PublishExplorationState();
-
     lookahead_point_update_ = GetLookAheadPoint(pd_.exploration_path_, global_path, pd_.lookahead_point_);
-    PublishWaypoint();
+    PublishWaypoint();  // topic_name: "/way_point", subscribed by localPlanner node
+    PublishGlobalPlanningVisualization(global_path, local_path);
 
-    overall_processing_timer.Stop(false);
-    overall_runtime_ = overall_processing_timer.GetDuration("ms");
-
+    // topic_name: "~/tare_visualizer/exploring_subspaces"
     pd_.visualizer_->GetGlobalSubspaceMarker(pd_.grid_world_, global_cell_tsp_order);
+    // topic_name: "~/tare_visualizer/local_planning_horizon"
     Eigen::Vector3d viewpoint_origin = pd_.viewpoint_manager_->GetOrigin();
     pd_.visualizer_->GetLocalPlanningHorizonMarker(viewpoint_origin.x(), viewpoint_origin.y(), pd_.robot_position_.z);
     pd_.visualizer_->PublishMarkers();
 
-    PublishLocalPlanningVisualization(local_path);
-    PublishGlobalPlanningVisualization(global_path, local_path);
+    // PublishLocalPlanningVisualization(local_path);
+    // PublishGlobalPlanningVisualization(global_path, local_path);
     PublishRuntime();
+    overall_processing_timer.Stop(false);
+    overall_runtime_ = overall_processing_timer.GetDuration("ms");
+    ROS_WARN("Overall runtime: %d ms", overall_runtime_);
   }
 
   // return true;

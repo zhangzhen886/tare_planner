@@ -99,18 +99,18 @@ public:
       // Update rolling occupancy grid
       rolled_in_occupancy_cloud_->cloud_ = pointcloud_manager_->GetRolledInOccupancyCloud();
       pointcloud_manager_->ClearNeighborCellOccupancyCloud();
-      //rolled_in_occupancy_cloud_->Publish();
+      rolled_in_occupancy_cloud_->Publish();
       rolling_occupancy_grid_->UpdateOccupancyStatus(rolled_in_occupancy_cloud_->cloud_);
     }
     if (occupancy_grid_rolling)
     {
       // Store and retrieve occupancy cloud
       rolled_out_occupancy_cloud_->cloud_ = rolling_occupancy_grid_->GetRolledOutOccupancyCloud();
-      //rolled_out_occupancy_cloud_->Publish();
+      rolled_out_occupancy_cloud_->Publish();
       pointcloud_manager_->StoreOccupancyCloud(rolled_out_occupancy_cloud_->cloud_);
 
       pointcloud_manager_->GetOccupancyCloud(pointcloud_manager_occupancy_cloud_->cloud_);
-      //pointcloud_manager_occupancy_cloud_->Publish();
+      pointcloud_manager_occupancy_cloud_->Publish();
     }
 
     robot_position_.x() = robot_position.x;
@@ -142,6 +142,7 @@ public:
     }
   }
 
+  // "SensorCoveragePlanner3D::UpdateGlobalRepresentation()"中调用
   template <class PCLPointType>
   void UpdateKeyposeCloud(typename pcl::PointCloud<PCLPointType>::Ptr& keypose_cloud)
   {
@@ -152,24 +153,29 @@ public:
     }
     else
     {
+      // keypose_cloud为连续多帧拼接的点云（当前观测到的数据）
       pcl::copyPointCloud<PCLPointType, PlannerCloudPointType>(*keypose_cloud, *(keypose_cloud_->cloud_));
 
       // Extract surface of interest
       misc_utils_ns::Timer get_surface_timer("get coverage and diff cloud");
       get_surface_timer.Start();
-      vertical_surface_cloud_->cloud_->clear();
 
+      vertical_surface_cloud_->cloud_->clear();
       vertical_surface_extractor_.ExtractVerticalSurface<PlannerCloudPointType, PlannerCloudPointType>(
           keypose_cloud_->cloud_, vertical_surface_cloud_->cloud_);
-      // vertical_surface_cloud_->Publish();
+      vertical_surface_cloud_->Publish();  // "~/coverage_cloud"，"keypose_cloud"中垂直的表面
 
+      // 历史的点云，R通道设置为255
       pointcloud_manager_->UpdateOldCloudPoints();
       pointcloud_manager_->UpdatePointCloud<PlannerCloudPointType>(*(vertical_surface_cloud_->cloud_));
+      // 更新后的点云，G通道设置为255
+      // 故绿色的点云表示当前的观测，红色表示本次更新后消失的历史观测，黄色表示当前仍然可见的历史观测
       pointcloud_manager_->UpdateCoveredCloudPoints();
 
       planner_cloud_->cloud_->clear();
+      // 只获取周围5*5个cell内的点
       pointcloud_manager_->GetPointCloud(*(planner_cloud_->cloud_));
-      planner_cloud_->Publish();
+      planner_cloud_->Publish();  // "~/planner_cloud"，pcl::PointXYZRGBNormal类型
 
       // Get the diff cloud
       diff_cloud_->cloud_->clear();
@@ -199,8 +205,9 @@ public:
       // Stack together
       keypose_cloud_stack_[keypose_cloud_count_]->clear();
       *keypose_cloud_stack_[keypose_cloud_count_] = *keypose_cloud_->cloud_;
-      keypose_cloud_count_ = (keypose_cloud_count_ + 1) % parameters_.kKeyposeCloudStackNum;
+      keypose_cloud_count_ = (keypose_cloud_count_ + 1) % parameters_.kKeyposeCloudStackNum;  // default(5)
       stacked_cloud_->cloud_->clear();
+      // 多次keypose_cloud_堆叠为stacked_cloud_
       for (int i = 0; i < parameters_.kKeyposeCloudStackNum; i++)
       {
         *(stacked_cloud_->cloud_) += *keypose_cloud_stack_[i];
@@ -221,6 +228,7 @@ public:
                                         parameters_.kStackedCloudDwzLeafSize, parameters_.kStackedCloudDwzLeafSize);
       stacked_vertical_surface_cloud_kdtree_->setInputCloud(stacked_vertical_surface_cloud_->cloud_);
 
+      // 堆叠的墙面点云(vertical_surface_cloud_stack_叠加)
       UpdateCollisionCloud();
 
       UpdateFrontiers();

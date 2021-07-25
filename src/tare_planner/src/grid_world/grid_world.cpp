@@ -179,6 +179,7 @@ void GridWorld::UpdateNeighborCells(const geometry_msgs::Point& robot_position)
 {
   if (!initialized_)
   {
+    // 初始化121*121*121块subspace
     initialized_ = true;
     origin_.x = robot_position.x - (kCellSize * kRowNum) / 2;
     origin_.y = robot_position.y - (kCellSize * kColNum) / 2;
@@ -189,7 +190,7 @@ void GridWorld::UpdateNeighborCells(const geometry_msgs::Point& robot_position)
     {
       for (int j = 0; j < kColNum; j++)
       {
-        for (int k = 0; k < kLevelNum; k++)
+        for (int k = 0; k < kLevelNum; k++)  // param "kGridWorldZNum"
         {
           Eigen::Vector3d subspace_center_position = subspaces_->Sub2Pos(i, j, k);
           geometry_msgs::Point subspace_center_geo_position;
@@ -212,6 +213,7 @@ void GridWorld::UpdateNeighborCells(const geometry_msgs::Point& robot_position)
 
   for (const auto& cell_ind : neighbor_cell_indices_)
   {
+    // 在上一帧的neighbor_cell里找
     if (std::find(prev_neighbor_cell_indices.begin(), prev_neighbor_cell_indices.end(), cell_ind) ==
         prev_neighbor_cell_indices.end())
     {
@@ -320,6 +322,7 @@ void GridWorld::GetMarker(visualization_msgs::Marker& marker)
         geometry_msgs::Point cell_center = subspaces_->GetCell(cell_ind).GetPosition();
         std_msgs::ColorRGBA color;
         bool add_marker = false;
+        // bool add_marker = true;
         if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::UNSEEN)
         {
           color.r = 0.0;
@@ -335,6 +338,7 @@ void GridWorld::GetMarker(visualization_msgs::Marker& marker)
           color.b = 0.0;
           color.a = 0.1;
           covered_count++;
+          add_marker = true;
         }
         else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING)
         {
@@ -351,6 +355,7 @@ void GridWorld::GetMarker(visualization_msgs::Marker& marker)
           color.g = 0.0;
           color.b = 0.0;
           color.a = 0.1;
+          add_marker = true;
         }
         else
         {
@@ -358,6 +363,7 @@ void GridWorld::GetMarker(visualization_msgs::Marker& marker)
           color.g = 0.8;
           color.b = 0.8;
           color.a = 0.1;
+          add_marker = true;
         }
         if (add_marker)
         {
@@ -718,6 +724,7 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
   // std::cout << std::endl;
 }
 
+// SensorCoveragePlanner3D::GlobalPlanning中调用
 exploration_path_ns::ExplorationPath GridWorld::SolveGlobalTSP(
     const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
     std::vector<int>& ordered_cell_indices, const std::unique_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph)

@@ -166,7 +166,8 @@ public:
       }
       update_viewpoint_count++;
     }
-    // std::cout << "update viewpoint num: " << update_viewpoint_count << std::endl;
+    std::cout << "update viewpoint num: " << update_viewpoint_count << std::endl;
+    // "PlanningEnv::diff_cloud_"
     for (const auto& point : cloud->points)
     {
       for (int i = 0; i < viewpoints_.size(); i++)
@@ -177,11 +178,13 @@ public:
           continue;
         }
         geometry_msgs::Point viewpoint_position = viewpoints_[i].GetPosition();
+        // 只处理距离近的viewpoint
         if (misc_utils_ns::InFOVSimple(
                 Eigen::Vector3d(point.x, point.y, point.z),
                 Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z),
                 vp_.kVerticalFOVRatio, vp_.kSensorRange, vp_.kInFovXYDistThreshold, vp_.kInFovZDiffThreshold))
         {
+          // ？
           viewpoints_[i].UpdateCoverage<PCLPointType>(point);
         }
       }
@@ -191,6 +194,7 @@ public:
   template <class PCLPointType>
   void UpdateRolledOverViewPointCoverage(const typename pcl::PointCloud<PCLPointType>::Ptr& cloud)
   {
+    // "PlanningEnv::stacked_cloud_"
     for (const auto& point : cloud->points)
     {
       for (const auto& viewpoint_ind : updated_viewpoint_indices_)

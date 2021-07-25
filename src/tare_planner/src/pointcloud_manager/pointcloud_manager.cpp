@@ -15,13 +15,13 @@ namespace pointcloud_manager_ns
 {
 PointCloudManager::PointCloudManager(int row_num, int col_num, int level_num, int max_cell_point_num, double cell_size,
                                      double cell_height, int neighbor_cell_num)
-  : kRowNum(row_num)
+  : kRowNum(row_num)  // param: "kPointCloudRowNum"(default 20)
   , kColNum(col_num)
-  , kLevelNum(level_num)
+  , kLevelNum(level_num)  // "kPointCloudLevelNum"(10)
   , kMaxCellPointNum(max_cell_point_num)
-  , kCellSize(cell_size)
-  , kCellHeight(cell_height)
-  , kNeighborCellNum(neighbor_cell_num)
+  , kCellSize(cell_size)  // "kPointCloudCellSize"(24.0 meter)
+  , kCellHeight(cell_height)  // "kPointCloudCellHeight"(3.0 meter)
+  , kNeighborCellNum(neighbor_cell_num)  // "kPointCloudManagerNeighborCellNum"(5)
   , kCloudDwzFilterLeafSize(0.2)
   , initialized_(false)
 {
