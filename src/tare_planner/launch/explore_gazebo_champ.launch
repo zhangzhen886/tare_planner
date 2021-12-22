@@ -1,0 +1,18 @@
+<launch>
+    <arg name="scenario" default="garage"/>
+    <arg name="rviz" default="true"/>
+
+    <group if="$(arg rviz)">
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="tare_planner_ground_rviz"
+              args="-d $(find tare_planner)/rviz/tare_planner_ground.rviz" respawn="true"/>
+    </group>
+
+    <node pkg="tare_planner" type="tare_planner_node" name="tare_planner_node" output="screen"
+          ns="sensor_coverage_planner">
+          <!--launch-prefix="gdb -ex run &#45;&#45;args">-->
+        <rosparam command="load" file="$(find tare_planner)/config/$(arg scenario).yaml" />
+        <param name="sub_state_estimation_topic_" value="/state_estimation_at_scan"/>
+        <param name="sub_registered_scan_topic_" value="/registered_scan"/>
+    </node>
+
+</launch>

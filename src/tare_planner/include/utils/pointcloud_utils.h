@@ -163,9 +163,11 @@ public:
   void Downsize(typename pcl::PointCloud<PCLPointType>::Ptr& cloud, double leaf_size_x, double leaf_size_y,
                 double leaf_size_z)
   {
+    typename pcl::PointCloud<PCLPointType>::Ptr filtered_cloud(new pcl::PointCloud<PCLPointType>());
     pointcloud_downsize_filter_.setLeafSize(leaf_size_x, leaf_size_y, leaf_size_z);
     pointcloud_downsize_filter_.setInputCloud(cloud);
-    pointcloud_downsize_filter_.filter(*cloud);
+    pointcloud_downsize_filter_.filter(*filtered_cloud);
+    pcl::copyPointCloud(*filtered_cloud, *cloud);
   }
 };
 

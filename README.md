@@ -6,7 +6,16 @@ TARE planner involves a hierarchical framework for highly efficient exploration 
 Please use instructions on our [project page](https://www.cmu-exploration.com/tare-planner).
 
 ## Usage
-The repository has been tested in Ubuntu 18.04 with ROS Melodic and Ubuntu 20.04 with ROS Noetic. Due to usage of [OR-Tools](https://developers.google.com/optimization) library, the code only supports AMD64 architecture and currently does not compile on ARM computers. To setup TARE Planner, clone the repository.
+The repository has been tested in Ubuntu 18.04 with ROS Melodic and Ubuntu 20.04 with ROS Noetic. Due to usage of [OR-Tools](https://developers.google.com/optimization) library, the code only supports AMD64 architecture and currently does not compile on ARM computers.
+
+If Ubuntu 16.04: 
+```
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update 
+sudo apt-get install gcc-7 g++-7
+```
+
+To setup TARE Planner, clone the repository.
 ```
 git clone https://github.com/caochao39/tare_planner.git
 ```

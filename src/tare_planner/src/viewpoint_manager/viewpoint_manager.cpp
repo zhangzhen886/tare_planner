@@ -400,15 +400,16 @@ void ViewPointManager::GetVisualizationCloud(pcl::PointCloud<pcl::PointXYZI>::Pt
   vis_cloud->clear();
   for (int i = 0; i < vp_.kViewPointNumber; i++)
   {
+    geometry_msgs::Point position = GetViewPointPosition(i, true);
     if (IsViewPointCandidate(i, true))
     {
-      geometry_msgs::Point position = GetViewPointPosition(i, true);
       pcl::PointXYZI vis_point;
       vis_point.x = position.x;
       vis_point.y = position.y;
       vis_point.z = position.z;
       // vis_point.intensity = graph_index_map_[i];
       // if (viewpoints_[i].Visited())
+      // 如果该点被访问过，那是红色，否则是紫色
       if (ViewPointVisited(i, true))
       {
         vis_point.intensity = -1.0;
@@ -1243,6 +1244,7 @@ int ViewPointManager::GetViewPointCandidate()
   for (int i = 0; i < vp_.kViewPointNumber; i++)
   {
     SetViewPointCandidate(i, false);
+    // if(!ViewPointInCollision(i))
     if (!ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
     {
       SetViewPointCandidate(i, true);

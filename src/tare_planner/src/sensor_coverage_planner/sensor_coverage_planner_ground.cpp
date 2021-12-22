@@ -254,6 +254,8 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(const sensor_msgs::PointClo
   }
   pcl::PointCloud<pcl::PointXYZ>::Ptr registered_scan_tmp(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::fromROSMsg(*registered_scan_msg, *registered_scan_tmp);
+  std::vector<int> indices;
+  pcl::removeNaNFromPointCloud(*registered_scan_tmp, *registered_scan_tmp, indices);
   if (registered_scan_tmp->points.empty())
   {
     return;
@@ -500,15 +502,17 @@ int SensorCoveragePlanner3D::UpdateViewPoints()
   pd_.collision_cloud_->Publish();  // topic_name: "collision_cloud"
   // pd_.collision_grid_cloud_->Publish();
 
+  // 检查视点是否发生碰撞 是否在视野范围内 是否可连接 只有false/true/true才会加入到candidate中
   pd_.viewpoint_manager_->CheckViewPointCollision(pd_.collision_cloud_->cloud_);
   pd_.viewpoint_manager_->CheckViewPointLineOfSight();
   pd_.viewpoint_manager_->CheckViewPointConnectivity();
   int viewpoint_candidate_count = pd_.viewpoint_manager_->GetViewPointCandidate();
-
+  ROS_INFO_STREAM("yjqtest... the num of candidate viewpoint: " << viewpoint_candidate_count);
   UpdateVisitedPositions();  // push "robot_position_" to "visited_positions_"
   // 当前位置周围以及当前cell内的viewpoint都设置为visited
   pd_.viewpoint_manager_->UpdateViewPointVisited(pd_.visited_positions_);
   pd_.viewpoint_manager_->UpdateViewPointVisited(pd_.grid_world_);
+  // viewpoint_vis_cloud_是通过均匀采样得到的候选视点
   pd_.viewpoint_manager_->GetVisualizationCloud(pd_.viewpoint_vis_cloud_->cloud_);
   // 包含I通道数据，已访问的vp为-1(可视化为红色)，其余表示"CoveredPointNum"(s紫色最大)
   pd_.viewpoint_vis_cloud_->Publish();
