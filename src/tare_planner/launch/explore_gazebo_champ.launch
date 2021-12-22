@@ -1,5 +1,5 @@
 <launch>
-    <arg name="scenario" default="garage"/>
+    <arg name="scenario" default="indoor"/>
     <arg name="rviz" default="true"/>
 
     <group if="$(arg rviz)">
