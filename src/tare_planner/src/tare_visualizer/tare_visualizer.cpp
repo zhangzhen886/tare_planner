@@ -152,7 +152,7 @@ void TAREVisualizer::GetLocalPlanningHorizonMarker(double x, double y, double z)
   local_planning_horizon_marker_->marker_.points.push_back(upper_left2);
   local_planning_horizon_marker_->marker_.points.push_back(upper_right2);
 }
-
+// 修改子空间的颜色 从绿色改为蓝色
 void TAREVisualizer::GetGlobalSubspaceMarker(const std::unique_ptr<grid_world_ns::GridWorld>& grid_world,
                                              const std::vector<int>& ordered_cell_indices)
 {
@@ -169,8 +169,8 @@ void TAREVisualizer::GetGlobalSubspaceMarker(const std::unique_ptr<grid_world_ns
     geometry_msgs::Point cell_center = grid_world->GetCellPosition(cell_ind);
     std_msgs::ColorRGBA color;
     color.r = 0.0;
-    color.g = 1.0;
-    color.b = 0.0;
+    color.g = 0.0;
+    color.b = 1.0;
     if (kExploringSubspaceMarkerColorGradientAlpha)
     {
       color.a = ((cell_num - i) * 1.0 / cell_num) * kExploringSubspaceMarkerColorMaxAlpha;

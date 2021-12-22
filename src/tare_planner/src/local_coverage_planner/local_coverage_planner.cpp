@@ -821,21 +821,22 @@ void LocalCoveragePlanner::GetSelectedViewPointVisCloud(pcl::PointCloud<pcl::Poi
     point.x = position.x;
     point.y = position.y;
     point.z = position.z;
+     // 如果是当前位置，点云为绿色1，起点设置为紫色3，终点为红色0，其余为青色2
     if (viewpoint_index == robot_viewpoint_ind_)
-    {
-      point.intensity = 0.0;  // 红
-    }
-    else if (viewpoint_index == start_viewpoint_ind_)
     {
       point.intensity = 1.0;  // 绿
     }
+    else if (viewpoint_index == start_viewpoint_ind_)
+    {
+      point.intensity = 3.0;  // 紫
+    }
     else if (viewpoint_index == end_viewpoint_ind_)
     {
-      point.intensity = 2.0;  // 青
+      point.intensity = 0.0;  // 红
     }
     else
     {
-      point.intensity = 3.0;  // 紫
+      point.intensity = 2.0;  // 青
     }
     cloud->points.push_back(point);
   }

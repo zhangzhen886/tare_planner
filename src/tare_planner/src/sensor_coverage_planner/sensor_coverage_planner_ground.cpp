@@ -111,11 +111,11 @@ void PlannerData::Initialize(ros::NodeHandle& nh, ros::NodeHandle& nh_p)
   initial_position_.z() = 0.0;
 
   cur_keypose_node_ind_ = 0;
-
+// 修改keypose中节点和边的颜色
   keypose_graph_node_marker_ = std::make_unique<misc_utils_ns::Marker>(nh, "keypose_graph_node_marker", kWorldFrameID);
   keypose_graph_node_marker_->SetType(visualization_msgs::Marker::POINTS);
   keypose_graph_node_marker_->SetScale(0.4, 0.4, 0.1);
-  keypose_graph_node_marker_->SetColorRGBA(1.0, 0.0, 0.0, 1.0);
+  keypose_graph_node_marker_->SetColorRGBA(0.0, 1.0, 0.0, 1.0);
   keypose_graph_edge_marker_ = std::make_unique<misc_utils_ns::Marker>(nh, "keypose_graph_edge_marker", kWorldFrameID);
   keypose_graph_edge_marker_->SetType(visualization_msgs::Marker::LINE_LIST);
   keypose_graph_edge_marker_->SetScale(0.05, 0.0, 0.0);

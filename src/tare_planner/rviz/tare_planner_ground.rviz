@@ -188,7 +188,7 @@ Visualization Manager:
         - Alpha: 0.800000012
           Buffer Length: 1
           Class: rviz/Path
-          Color: 98; 240; 231
+          Color: 84; 139; 84
           Enabled: true
           Head Diameter: 0.300000012
           Head Length: 0.200000003
@@ -335,6 +335,7 @@ Visualization Manager:
           Size (Pixels): 3
           Size (m): 0.5
           Style: Spheres
+          # 均匀采样的点 
           Topic: /sensor_coverage_planner/planner_data/viewpoint_vis_cloud
           Unreliable: false
           Use Fixed Frame: true
@@ -365,6 +366,7 @@ Visualization Manager:
           Size (Pixels): 3
           Size (m): 0.800000012
           Style: Spheres
+          # 选好的候选点
           Topic: /sensor_coverage_planner/planner_data/selected_viewpoint_vis_cloud
           Unreliable: false
           Use Fixed Frame: true
@@ -395,6 +397,7 @@ Visualization Manager:
           Size (Pixels): 3
           Size (m): 2
           Style: Spheres
+          # 前视点
           Topic: /sensor_coverage_planner/planner_data/lookahead_point_cloud
           Unreliable: false
           Use Fixed Frame: true
@@ -403,7 +406,7 @@ Visualization Manager:
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
-          Color: 45; 66; 253
+          Color: 139; 69; 19
           Enabled: true
           Head Diameter: 0.300000012
           Head Length: 0.200000003

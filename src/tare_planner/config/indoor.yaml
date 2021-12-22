@@ -53,13 +53,14 @@ kCoverCloudZSqueezeRatio : 2.0
 viewpoint_manager/number_x : 50
 viewpoint_manager/number_y : 50
 viewpoint_manager/number_z : 1
-viewpoint_manager/resolution_x : 0.6
-viewpoint_manager/resolution_y : 0.6
+viewpoint_manager/resolution_x : 0.25
+viewpoint_manager/resolution_y : 0.25
 viewpoint_manager/resolution_z : 0.0
 kCollisionCheckTerrainThr : 0.25
 kGreedyViewPointSampleRange : 3
 kLocalPathOptimizationItrMax : 10
-kViewPointCollisionMargin : 0.5
+# 2 * kViewPointCollisionMargin > viewpoint_manager/resolution_x 否则碰撞会检测不到
+kViewPointCollisionMargin : 0.15
 kViewPointCollisionMarginZPlus : 0.2
 kViewPointCollisionMarginZMinus : 0.8
 kCollisionGridZScale : 1.0
@@ -94,20 +95,21 @@ kCellAlmostCoveredToExploringThr: 20
 kCellUnknownToExploringThr: 1
 
 # Visualization
+#设置当前规划空间和子空间的颜色 
 kExploringSubspaceMarkerColorGradientAlpha : true
 kExploringSubspaceMarkerColorMaxAlpha : 0.8
 kExploringSubspaceMarkerColorR : 0.0
-kExploringSubspaceMarkerColorG : 1.0
-kExploringSubspaceMarkerColorB : 0.0
+kExploringSubspaceMarkerColorG : 0.0
+kExploringSubspaceMarkerColorB : 1.0
 kExploringSubspaceMarkerColorA : 1.0
 kLocalPlanningHorizonMarkerColorR : 0.0
-kLocalPlanningHorizonMarkerColorG : 1.0
-kLocalPlanningHorizonMarkerColorB : 0.0
+kLocalPlanningHorizonMarkerColorG : 0.0
+kLocalPlanningHorizonMarkerColorB : 1.0
 kLocalPlanningHorizonMarkerColorA : 1.0
 kLocalPlanningHorizonMarkerWidth : 0.3
 kLocalPlanningHorizonHeight : 3.0
 
-# Rolling occupancy grid
+# Rolling occupancy grid 滚动栅格的分辨率
 rolling_occupancy_grid/resolution_x : 0.3
 rolling_occupancy_grid/resolution_y : 0.3
 rolling_occupancy_grid/resolution_z : 0.3
